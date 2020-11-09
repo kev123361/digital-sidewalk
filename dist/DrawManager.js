@@ -1,11 +1,11 @@
 var socket;
-var port;
 
 var canvas;
 
 function setup() {
    
-    socket = io.connect('http://localhost:3000');
+    //socket = io.connect(process.env.PORT || 'http://localhost:3000');
+    socket = io();
 
     socket.on("newDrawingData", ReceiveNewDrawing);
     setupCanvas();

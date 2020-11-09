@@ -9,6 +9,8 @@ var socket = require('socket.io');
 var io = socket(server);
 io.sockets.on('connection', newConnection);
 
+//const port = process.env.PORT || 'http://localhost:3000'
+
 function newConnection(socket) {
     var thisID;
     console.log('new connection: ' + socket.id);
