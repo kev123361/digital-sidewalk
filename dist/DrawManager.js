@@ -15,8 +15,24 @@ function setup() {
 
 function setupCanvas() {
     canvas = new fabric.Canvas('canvas', {
-        isDrawingMode:true
+        isDrawingMode:true,
     });
+
+    var c = document.createElement('canvas');
+    c.setAttribute('id', 'c');
+    c.setAttribute('width', '250');
+    c.setAttribute('height', '250');
+    c.setAttribute('style', 'border:2px solid #000000');
+    console.log(c)
+    document.getElementById('twocell').appendChild(c);
+ 
+    var newCanvas = new fabric.Canvas('c', {
+        isDrawingMode:true,
+        width: '250',
+        height:'250'
+        //style='border:2px solid #000000'
+    });
+    //$('canvasWrapper').append(newCanvas); 
     //canvas.add(new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100}));
 
     canvas.on('path:created', function(e) {
