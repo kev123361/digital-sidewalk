@@ -34,7 +34,11 @@ function setupCanvas() {
     });
     //$('canvasWrapper').append(newCanvas); 
     //canvas.add(new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100}));
-
+    canvas.freeDrawingBrush = new fabric.CrayonBrush(canvas, {
+        width: 70,
+        opacity: 0.6,
+        color: "#ff0000"
+      });
     canvas.on('path:created', function(e) {
         //console.log(e);
         var newPath = e.path;
