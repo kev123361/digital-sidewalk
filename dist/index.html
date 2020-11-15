@@ -1,11 +1,22 @@
+<html>
 <head>
+    <link rel="stylesheet" href="stylesheets/normalize.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <link rel="stylesheet" href="stylesheets/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.js"></script>
     <script src="fabric.min.js"></script>
+    <script src="fabric-brush.min.js"></script>
     <script src="DrawManager.js"></script>
+    <script src="dat-gui/build/dat.gui.min.js"></script>
 </head>
 
 
 <body>
-    <canvas id="canvas" width="400" height="400" style="border:2px solid #000000"></canvas>
-    <script>setup();</script>
+    <canvas id="canvas" width="800" height="800" style="border:2px solid #000000;position: absolute; margin-left: 50%; 
+    "></canvas>
+   
+    <script>
+    setup();
+    </script>
 </body>
+</html>
