@@ -89,7 +89,8 @@ function setupCanvas() {
     
     //----------------new for stitching---------------------------------//
     c_test = new fabric.Canvas('c_test', {
-        isDrawingMode:false
+        isDrawingMode:false,
+        defaultCursor:"url('needle.png'),move"
     });
     
     var coordi=[];
