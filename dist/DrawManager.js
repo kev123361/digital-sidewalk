@@ -89,7 +89,7 @@ function setupCanvas() {
     
     //----------------new for stitching---------------------------------//
     c_test = new fabric.Canvas('c_test', {
-        //isDrawingMode:true
+        isDrawingMode:false
     });
     
     var coordi=[];
@@ -103,7 +103,7 @@ function setupCanvas() {
             })
             // Add small circle as an indicative point
             var circlePoint = new fabric.Circle({
-            radius: 3,
+            radius: 2,
             fill: "#081d1f",
             left: positionX,
             top: positionY,
@@ -151,6 +151,7 @@ function setupCanvas() {
     //----------------new for stitching---------------------------------//
 
 }
+
 //----------------new for stitching---------------------------------//
 var color_string="blue";
 function changeColor(e){
