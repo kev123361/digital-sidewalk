@@ -53,6 +53,51 @@ function setupCanvasFromServer(data) {
                     height:'250'
                     //style='border:2px solid #000000'
                 });
+
+                function setupBrush(brushName, opt) {
+                    newCanvas.freeDrawingBrush = new fabric[brushName](newCanvas, opt || {});
+                }
+                var gui = new dat.GUI();
+                gui.brushType = "InkBrush";
+                gui.brushWidth = 20;
+                gui.brushOpacity = 1;
+                gui.inkAmount = 7;
+                gui.brushColor = "#ff0000";
+                setupBrush(gui.brushType, {
+                    width: gui.brushWidth,
+                    opacity: gui.brushOpacity,
+                    inkAmount: gui.inkAmount,
+                    color: gui.brushColor
+                });
+                gui.clear = function(){
+                    newCanvas.clearContext(newCanvas.contextTop);
+                }
+                gui.save = function() {
+                    var dataURL = newCanvas.contextTop.canvas.toDataURL("image/png");
+                    window.open(dataURL);
+                }
+                gui.add(gui, "brushType", ["CrayonBrush", "InkBrush", "MarkerBrush", "SprayBrush"])
+                    .onFinishChange(setupBrush);
+                gui.add(gui, "brushWidth", 0, 100).step(5)
+                    .onChange(function(value) {
+                        newCanvas.freeDrawingBrush.width = value;
+                    });
+                gui.addColor(gui, "brushColor")
+                    .onChange(function(value) {
+                        newCanvas.freeDrawingBrush.changeColor(value);
+                    });
+                gui.add(gui, "brushOpacity", 0.1, 1).step(0.1)
+                    .onChange(function(value) {
+                        newCanvas.freeDrawingBrush.changeOpacity(value);
+                    });
+                gui.add(gui, "inkAmount", 1, 10).step(0.1)
+                    .onChange(function(value) {
+                        newCanvas.freeDrawingBrush.inkAmount = value;
+                    });
+                gui.add(gui, "save");
+                gui.add(gui, "clear");
+
+
                 localCanvases[i][j] = newCanvas;
             }
         }
@@ -60,47 +105,78 @@ function setupCanvasFromServer(data) {
 }
 
 
-function setupCanvas() {
-
-    canvas = new fabric.Canvas('canvas', {
-        isDrawingMode:true,
-    });
-
-    var c = document.createElement('canvas');
-    c.setAttribute('id', 'c');
-    c.setAttribute('width', '250');
-    c.setAttribute('height', '250');
-    c.setAttribute('style', 'border:2px solid #000000');
-    //console.log(c)
-    document.getElementById('twocell').appendChild(c);
- 
-    newCanvas = new fabric.Canvas('c', {
-        isDrawingMode:true,
-        width: '250',
-        height:'250'
-        //style='border:2px solid #000000'
-    });
-    console.log(newCanvas.toJSON());
-    //$('canvasWrapper').append(newCanvas); 
+// function setupCanvas() {
+//  /*var canvas = new fabric.Canvas("fabric-brush-demo", {
+//         isDrawingMode: true,
+//         hoverCursor: "pointer",
+//         selection: false
+//       })
+//       */
+//     canvas = new fabric.Canvas('canvas', {
+//         isDrawingMode:true,
+//     });
+//     function setupBrush(brushName, opt) {
+//         canvas.freeDrawingBrush = new fabric[brushName](canvas, opt || {});
+//     }
+//     var gui = new dat.GUI();
+//     gui.brushType = "InkBrush";
+//     gui.brushWidth = 20;
+//     gui.brushOpacity = 1;
+//     gui.inkAmount = 7;
+//     gui.brushColor = "#ff0000";
+//     setupBrush(gui.brushType, {
+//         width: gui.brushWidth,
+//         opacity: gui.brushOpacity,
+//         inkAmount: gui.inkAmount,
+//         color: gui.brushColor
+//     });
+//     gui.clear = function(){
+//         canvas.clearContext(canvas.contextTop);
+//     }
+//     gui.save = function() {
+//         var dataURL = canvas.contextTop.canvas.toDataURL("image/png");
+//         window.open(dataURL);
+//     }
+//     gui.add(gui, "brushType", ["CrayonBrush", "InkBrush", "MarkerBrush", "SprayBrush"])
+//         .onFinishChange(setupBrush);
+//     gui.add(gui, "brushWidth", 0, 100).step(5)
+//         .onChange(function(value) {
+//             canvas.freeDrawingBrush.width = value;
+//         });
+//     gui.addColor(gui, "brushColor")
+//         .onChange(function(value) {
+//             canvas.freeDrawingBrush.changeColor(value);
+//         });
+//     gui.add(gui, "brushOpacity", 0.1, 1).step(0.1)
+//         .onChange(function(value) {
+//             canvas.freeDrawingBrush.changeOpacity(value);
+//         });
+//     gui.add(gui, "inkAmount", 1, 10).step(0.1)
+//         .onChange(function(value) {
+//             canvas.freeDrawingBrush.inkAmount = value;
+//         });
+//     gui.add(gui, "save");
+//     gui.add(gui, "clear");
+//     }
     //canvas.add(new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100}));
-    canvas.freeDrawingBrush = new fabric.CrayonBrush(canvas, {
-        width: 70,
-        opacity: 0.6,
-        color: "#ff0000"
-      });
-    // canvas.on('path:created', function(e) {
-    //     //console.log(e);
-    //     var newPath = e.path;
-    //     console.log(newPath);
-    //     var data = {
-    //         drawing: newPath
-    //     };
-    //     socket.emit("newDrawing", data);
-    // });
+//     canvas.freeDrawingBrush = new fabric.CrayonBrush(canvas, {
+//         width: 70,
+//         opacity: 0.6,
+//         color: "#ff0000"
+//       });
+//     // canvas.on('path:created', function(e) {
+//     //     //console.log(e);
+//     //     var newPath = e.path;
+//     //     console.log(newPath);
+//     //     var data = {
+//     //         drawing: newPath
+//     //     };
+//     //     socket.emit("newDrawing", data);
+//     // });
 
-    canvas.on('mouse:up', HandleMouseEvent);
+//     canvas.on('mouse:up', HandleMouseEvent);
 
-}
+// }
 
 function ReceiveUserID(data) {
     console.log("My User ID is: " + data);
