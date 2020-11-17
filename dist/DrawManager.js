@@ -2,6 +2,9 @@ var socket;
 
 var canvas;
 
+//used for stitching test
+var c_test;
+
 function setup() {
    
     //socket = io.connect(process.env.PORT || 'http://localhost:3000');
@@ -23,8 +26,9 @@ function setupCanvas() {
     canvas = new fabric.Canvas('canvas', {
         isDrawingMode:true
     });
+
     function setupBrush(brushName, opt) {
-        canvas.freeDrawingBrush = new fabric[brushName](canvas, opt || {});
+       canvas.freeDrawingBrush = new fabric[brushName](canvas, opt || {});
     }
     var gui = new dat.GUI();
     gui.brushType = "InkBrush";
@@ -82,7 +86,77 @@ function setupCanvas() {
         socket.emit("newDrawing", data);
     });
 
+    
+    //----------------new for stitching---------------------------------//
+    c_test = new fabric.Canvas('c_test', {
+        //isDrawingMode:true
+    });
+    
+    var coordi=[];
+    c_test.on("mouse:down", function(event) {
+            var pointer = c_test.getPointer(event.e);
+            var positionX = pointer.x;
+            var positionY = pointer.y;
+            var shadow=new fabric.Shadow({
+                blur:3,
+                color:"black"
+            })
+            // Add small circle as an indicative point
+            var circlePoint = new fabric.Circle({
+            radius: 3,
+            fill: "#081d1f",
+            left: positionX,
+            top: positionY,
+            selectable: false,
+            originX: "center",
+            originY: "center",
+            hoverCursor: "auto",
+            shadow:shadow
+            });
+
+            c_test.add(circlePoint);
+            // Store the points to draw the lines
+            coordi.push(circlePoint);
+
+            if (coordi.length > 1) {
+            // draw a line using the two points
+            var startPoint = coordi[0];
+            var endPoint = coordi[1];
+        
+            var line = new fabric.Line(
+                [
+                startPoint.get("left"),
+                startPoint.get("top"),
+                endPoint.get("left"),
+                endPoint.get("top")
+                ],
+                {
+                stroke: color_string,
+                strokeWidth: 3,
+                hasControls: false,
+                hasBorders: false,
+                selectable: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                hoverCursor: "default",
+                originX: "center",
+                originY: "center"
+                }
+            );
+            coordi=[];
+            c_test.add(line);
+            }
+    });
+    
+    //----------------new for stitching---------------------------------//
+
 }
+//----------------new for stitching---------------------------------//
+var color_string="blue";
+function changeColor(e){
+    color_string=e.target.value;
+}
+//----------------new for stitching---------------------------------//
 
 function ReceiveNewDrawing(data) {
     console.log(data.drawing);
