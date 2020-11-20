@@ -1,214 +1,186 @@
-var socket;
-
-var canvas;
-var newCanvas;
-
-var myID;
-
-//local 2d array to actual canvas elements
-var localCanvases = [
-    [false, false, false],
-    [false, false, false],
-    [false, false, false],
-];
-
 function setup() {
-   
     //socket = io.connect(process.env.PORT || 'http://localhost:3000');
     socket = io();
-    socket.on("newUserID", ReceiveUserID);
-    socket.emit("newUser");
-
     socket.on("newDrawingData", ReceiveNewDrawing);
-    socket.on("newMouseClickData", ReceiveNewMouseClick);
-    socket.on("receivedCanvases", setupCanvasFromServer)
-
-    socket.emit("requestCanvases");
-    //setupCanvas();
-
+    //at the beginning, set all the canvas to isDrawingMode:false selectable:false
+    for(var i=0;i<canvasId.length;i++){
+        setupCanvas_no(i);    
+    }
+    //for every canvas, there is a mousecontrol inspector
+    for(var j=0;j<canvasId.length;j++){
+        mouseInspector(j);
+    }
 
 }
-
-function setupCanvasFromServer(data) {
-    var canvases = data.canvases;
-
-    for(var i = 0; i <canvases.length; i++) {
-        var currRow = canvases[i];
-        for (var j = 0; j < currRow.length; j++) {
-            //if this canvas square is active on the server, create it on local machine
-            if (currRow[j]) {
-                //console.log((String)(i)+String(j));
-                var c = document.createElement('canvas');
-                c.setAttribute('id', (String)(i)+(String)(j)+"canvas");
-                c.setAttribute('width', '250');
-                c.setAttribute('height', '250');
-                c.setAttribute('style', 'border:2px solid #000000');
-                //console.log(c)
-                //console.log((String)(i)+(String)(j))
-                //console.log(document.getElementById((String)(i)+(String)(j)))
-                document.getElementById((String)(i)+(String)(j)).appendChild(c);
-                newCanvas = new fabric.Canvas((String)(i)+(String)(j)+"canvas", {
-                    isDrawingMode:true,
-                    width: '250',
-                    height:'250'
-                    //style='border:2px solid #000000'
-                });
-
-                function setupBrush(brushName, opt) {
-                    newCanvas.freeDrawingBrush = new fabric[brushName](newCanvas, opt || {});
-                }
-                var gui = new dat.GUI();
-                gui.brushType = "InkBrush";
-                gui.brushWidth = 20;
-                gui.brushOpacity = 1;
-                gui.inkAmount = 7;
-                gui.brushColor = "#ff0000";
-                setupBrush(gui.brushType, {
-                    width: gui.brushWidth,
-                    opacity: gui.brushOpacity,
-                    inkAmount: gui.inkAmount,
-                    color: gui.brushColor
-                });
-                gui.clear = function(){
-                    newCanvas.clearContext(newCanvas.contextTop);
-                }
-                gui.save = function() {
-                    var dataURL = newCanvas.contextTop.canvas.toDataURL("image/png");
-                    window.open(dataURL);
-                }
-                gui.add(gui, "brushType", ["CrayonBrush", "InkBrush", "MarkerBrush", "SprayBrush"])
-                    .onFinishChange(setupBrush);
-                gui.add(gui, "brushWidth", 0, 100).step(5)
-                    .onChange(function(value) {
-                        newCanvas.freeDrawingBrush.width = value;
-                    });
-                gui.addColor(gui, "brushColor")
-                    .onChange(function(value) {
-                        newCanvas.freeDrawingBrush.changeColor(value);
-                    });
-                gui.add(gui, "brushOpacity", 0.1, 1).step(0.1)
-                    .onChange(function(value) {
-                        newCanvas.freeDrawingBrush.changeOpacity(value);
-                    });
-                gui.add(gui, "inkAmount", 1, 10).step(0.1)
-                    .onChange(function(value) {
-                        newCanvas.freeDrawingBrush.inkAmount = value;
-                    });
-                gui.add(gui, "save");
-                gui.add(gui, "clear");
-
-
-                localCanvases[i][j] = newCanvas;
+function setupCanvas_no(i){
+    canvasName[i] = new fabric.Canvas(canvasId[i], {
+        isDrawingMode:false,
+        selectable:false 
+    });
+    //canvasName[i].deactivateAll();
+    canvasName[i].renderAll();
+    canvasName[i].forEachObject(function(object){ 
+        object.selectable = false; 
+    });
+}
+function mouseInspector(i){
+    coordi=[];
+    //inspect mouse over for all
+    canvasName[i].on("mouse:over", function(event){
+        //stitching
+        if(activebrushName==brushName[3]){
+            //unable brush for all canvas
+            for(var j=0;j<canvasId.length;j++){
+                unableBrush(canvasName[j]);
             }
+            //inspect mouse down for stitching
+            canvasName[i].on("mouse:down", function(event) 
+            {
+                //make sure it's stitching again
+                if(activebrushName==brushName[3]){
+                    //if change canvas, clear coordi[], not letting the line connect to point location in another canvas
+                    var currentcanvasName=canvasName[i];
+                    if(currentcanvasName!=activecanvasName)coordi=[];
+                    //update all active parameter
+                    activecanvasName=canvasName[i];
+                    activecanvasId=canvasId[i];
+                    activecanvasName.isDrawingMode=false;
+                    activecanvasName.selection=false;
+                    activecanvasName.defaultCursor = 'url("needle.png"), auto';
+                    //set up stitching
+                    stitching(event);
+                }
+            });
         }
+        //freedrawing brushes
+        else{
+            coordi=[];
+            //document.getElementById("demo").innerHTML = "Hello World";
+            activecanvasName=canvasName[i];
+            activecanvasId=canvasId[i];
+            //unable brushes for all other canvas
+            for(var j=0;j<canvasId.length;j++){
+                if(j!=i){
+                    unableBrush(canvasName[j]);
+                }
+            }
+            setupBrush(activecanvasName);
+        }
+    
+    });  
+    
+
+}
+function stitching(event){
+    var pointer = activecanvasName.getPointer(event.e);
+    var positionX = pointer.x;
+    var positionY = pointer.y;
+    var shadow=new fabric.Shadow({
+        blur:3,
+        color:"black"
+    })
+    // Add small circle as an indicative point
+    var circlePoint = new fabric.Circle({
+        radius: 2,
+        fill: "#081d1f",
+        left: positionX,
+        top: positionY,
+        selectable: false,
+        originX: "center",
+        originY: "center",
+        hoverCursor: "auto",
+        shadow:shadow
+    });
+    activecanvasName.add(circlePoint);
+    // Store the points to draw the lines
+    coordi.push(circlePoint);
+    if (coordi.length > 1) 
+    {
+        // draw a line using the two points
+        var startPoint = coordi[0];
+        var endPoint = coordi[1];
+
+        var line = new fabric.Line(
+            [
+                startPoint.get("left"),
+                startPoint.get("top"),
+                endPoint.get("left"),
+                endPoint.get("top")
+            ],
+            {
+                stroke: activeColor,
+                strokeWidth: 3,
+                hasControls: false,
+                hasBorders: false,
+                selectable: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                hoverCursor: "default",
+                originX: "center",
+                originY: "center"
+            }
+        );
+        //only store 2 points max
+        coordi[0]=coordi[1];
+        coordi.pop();
+        activecanvasName.add(line);
     }
 }
-
-
-// function setupCanvas() {
-//  /*var canvas = new fabric.Canvas("fabric-brush-demo", {
-//         isDrawingMode: true,
-//         hoverCursor: "pointer",
-//         selection: false
-//       })
-//       */
-//     canvas = new fabric.Canvas('canvas', {
-//         isDrawingMode:true,
-//     });
-//     function setupBrush(brushName, opt) {
-//         canvas.freeDrawingBrush = new fabric[brushName](canvas, opt || {});
-//     }
-//     var gui = new dat.GUI();
-//     gui.brushType = "InkBrush";
-//     gui.brushWidth = 20;
-//     gui.brushOpacity = 1;
-//     gui.inkAmount = 7;
-//     gui.brushColor = "#ff0000";
-//     setupBrush(gui.brushType, {
-//         width: gui.brushWidth,
-//         opacity: gui.brushOpacity,
-//         inkAmount: gui.inkAmount,
-//         color: gui.brushColor
-//     });
-//     gui.clear = function(){
-//         canvas.clearContext(canvas.contextTop);
-//     }
-//     gui.save = function() {
-//         var dataURL = canvas.contextTop.canvas.toDataURL("image/png");
-//         window.open(dataURL);
-//     }
-//     gui.add(gui, "brushType", ["CrayonBrush", "InkBrush", "MarkerBrush", "SprayBrush"])
-//         .onFinishChange(setupBrush);
-//     gui.add(gui, "brushWidth", 0, 100).step(5)
-//         .onChange(function(value) {
-//             canvas.freeDrawingBrush.width = value;
-//         });
-//     gui.addColor(gui, "brushColor")
-//         .onChange(function(value) {
-//             canvas.freeDrawingBrush.changeColor(value);
-//         });
-//     gui.add(gui, "brushOpacity", 0.1, 1).step(0.1)
-//         .onChange(function(value) {
-//             canvas.freeDrawingBrush.changeOpacity(value);
-//         });
-//     gui.add(gui, "inkAmount", 1, 10).step(0.1)
-//         .onChange(function(value) {
-//             canvas.freeDrawingBrush.inkAmount = value;
-//         });
-//     gui.add(gui, "save");
-//     gui.add(gui, "clear");
-//     }
-    //canvas.add(new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100}));
-//     canvas.freeDrawingBrush = new fabric.CrayonBrush(canvas, {
-//         width: 70,
-//         opacity: 0.6,
-//         color: "#ff0000"
-//       });
-//     // canvas.on('path:created', function(e) {
-//     //     //console.log(e);
-//     //     var newPath = e.path;
-//     //     console.log(newPath);
-//     //     var data = {
-//     //         drawing: newPath
-//     //     };
-//     //     socket.emit("newDrawing", data);
-//     // });
-
-//     canvas.on('mouse:up', HandleMouseEvent);
-
-// }
-
-function ReceiveUserID(data) {
-    console.log("My User ID is: " + data);
-    myID = data;
+function setupBrush(canvas_name) {
+    canvas_name.forEachObject(function(object){ 
+        object.selectable = false; 
+    });
+    //crayon
+    if(activebrushName==brushName[0]){
+        canvas_name.isDrawingMode=true;
+        canvas_name.freeDrawingBrush = new fabric.CrayonBrush(canvas_name, {
+            width: activeWidth,
+            opacity: activeOpacity,
+            color: activeColor
+        });
+    }
+    //ink
+    else if(activebrushName==brushName[1]){
+        canvas_name.isDrawingMode=true;
+        canvas_name.freeDrawingBrush = new fabric.InkBrush(canvas_name, {
+            width: activeWidth,
+            opacity: activeOpacity,
+            color: activeColor
+        });
+    }
 }
-
+function unableBrush(canvas_name) {
+    canvas_name.isDrawingMode=false;
+    canvas_name.selectable=false;
+ }
+function changeColor(e){
+    activeColor=e.target.value;
+    activecanvasName.freeDrawingBrush.changeColor(activeColor);
+    //everytime when you put kniddle out of the canvas, you have to restart stitching
+    coordi=[];
+}
+function changeWidth(e){
+    activeWidth=e.target.value;
+    activecanvasName.freeDrawingBrush.width=activeWidth;
+    coordi=[];
+}
+function changeBrush(i){
+    activebrushName=brushName[i];
+    coordi=[];
+}
+function changeOpacity(e){
+    activeOpacity=e.target.value;
+    activecanvasName.freeDrawingBrush.changeOpacity(activeOpacity);
+    coordi=[];
+}
 function ReceiveNewDrawing(data) {
-    //console.log(data.image);
-
-
-    console.log(data);
-    // var img = data.newImage;
-    // console.log(img);
-    // canvas.clear();
-    // var ctx = canvas.getContext("2d");
-    // ctx.drawImage(img.src, 0, 0, 250, 250);
-    //canvas.drawImage(img);
-    console.log(URL.createObjectURL(data.src));
-    
-    canvas.clear();
-    canvas.add(fabricImg);
-}
-
-function ReceiveNewMouseClick(data) {
-    console.log(data.event);
-    canvas.off('mouse:down', HandleMouseEvent);
-    evt = new Event('mousedown', { clientX: data.clientX, clientY: data.clientY });
-    canvas.upperCanvasEl.dispatchEvent(evt);
-}
-
-function HandleMouseEvent(e) {
-    
-
-    //socket.emit("newDrawing", JSON.stringify(copy));
+    console.log(data.drawing);
+    var path = new fabric.Path(data.drawing.path);
+    path.set( {
+        fill: data.drawing.fill,
+        stroke: data.drawing.stroke
+    });
+    //path.path = data.drawing.path;
+    console.log(path);
+    activecanvasName.add(path);
 }

@@ -12,22 +12,65 @@
 
 
 <body>
-
-    <div class="wrapper">
-        <div id ="00" class = "one cell"></div>
-        <div id ="01" "twocell" class = "two cell"></div>
-        <div id="02" class = "three cell"></div>
-        <div id="10" class = "four cell"></div>
-        <div id="11" class ="five cell"></div>
-        <div id="12" class = "six cell"></div>
-        <div id="20" class = "seven cell"></div>
-        <div id="21" class = "eight cell"></div>
-        <div id="22" class = "nine cell"></div>
-
-
+    
+    <div id="container">
+        <div style="position:absolute; top:0px;">
+            <canvas id="canvas1" width="400" height="400" style="border:2px solid #000000; "></canvas>
+        </div>
+        <div style="position:absolute; top:0px;left:500px;">
+            <canvas id="canvas2" width="400" height="400" style="border:2px solid #000000;"></canvas>
+        </div>
+        <div style="position:absolute; top:0px;left:1000px;">
+            <canvas id="canvas3" width="400" height="400" style="border:2px solid #000000;"></canvas>
+        </div>    
     </div>
+    <div style="position:absolute; top:420px;">
+        <p>Size: <span id="width_text"></span></p>
+        <input type="range" id="width" min="0" max="100" value="50" onchange="changeWidth(event)"/>
+    </div>
+    <div style="position:absolute; top:420px;left:400px;">
+        <p>Opacity: <span id="opacity_text"></span></p>
+        <input type="range" id="opacity" min="0.1" max="1" value="0.7" onchange="changeOpacity(event)"/>
+        
+    </div>
+    <div style="position:absolute; top:500px;">
+        Choose Yarn Color: <input type="color" value="#0000ff" onchange="changeColor(event)"/>
+        <button id="crayon" onclick="changeBrush(0)">Crayon</button>
+        <button id="ink" onclick="changeBrush(1)">Ink</button>
+        <button id="stitching" onclick="changeBrush(3)">Stitching</button>
+        
+        <p id="demo" style="top:1200px; left:0px;">aaa</p>
+        
+    </div>
+   
 
+    <script>
+        var socket;
+        var brushName=["CrayonBrush","InkBrush","MarkerBrush","Stitching"];
+        //initialize
+        var activecanvasName,activecanvasId;
+        var activebrushName="CrayonBrush";
+        var activeColor="blue";
+        var activeWidth=50;
+        var activeOpacity=0.7;
 
+        var numCanvas=3;//number of canvas
+        var canvasId=[];//id in html
+        var canvasName=[];//canvas being created
+        var coordi=[];//array to store the point for stitching
 
-    <script>setup();</script>
+        //create array to store canvas names and ids
+        var add,newId,newName;
+        for(var i=0;i<numCanvas;i++){
+            add=i+1;
+            newId="canvas"+add;
+            canvasId.push(newId);
+            newName="Canvas"+add;
+            canvasName.push(newName);
+        }
+        document.getElementById("width").step = "5";
+        document.getElementById("opacity").step = "0.1";
+        setup();
+    </script>
 </body>
+</html>
