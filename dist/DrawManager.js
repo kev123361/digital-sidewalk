@@ -15,12 +15,28 @@ function setup() {
 function setupCanvas_no(i){
     canvasName[i] = new fabric.Canvas(canvasId[i], {
         isDrawingMode:false,
-        selectable:false 
+        selectable:false,
+        width:400,
+        height:400
     });
     //canvasName[i].deactivateAll();
     canvasName[i].renderAll();
     canvasName[i].forEachObject(function(object){ 
         object.selectable = false; 
+    });
+    canvasName[i].on("mouse:up", function(event) {
+        
+        //canvasName[i].contextTopDirty = true;
+        //canvasName[i].add(imgcopy);
+
+
+        var data = {
+            image : canvasName[i].upperCanvasEl.toDataURL(),
+            id : i
+        }
+        //console.log(data.image)
+        socket.emit("newDrawing", data);
+
     });
 }
 function mouseInspector(i){
@@ -66,7 +82,6 @@ function mouseInspector(i){
             }
             setupBrush(activecanvasName);
         }
-    
     });  
     
 
@@ -174,13 +189,15 @@ function changeOpacity(e){
     coordi=[];
 }
 function ReceiveNewDrawing(data) {
-    console.log(data.drawing);
-    var path = new fabric.Path(data.drawing.path);
-    path.set( {
-        fill: data.drawing.fill,
-        stroke: data.drawing.stroke
-    });
-    //path.path = data.drawing.path;
-    console.log(path);
-    activecanvasName.add(path);
+    //console.log(data.image);
+    var newImg = new Image;
+    var ctx = canvasName[data.id].getContext('2d');
+
+    newImg.onload = function() {
+        ctx.clearRect(0, 0, canvasName[data.id].width, canvasName[data.id].height)
+        ctx.drawImage(newImg, 0, 0, dwidth=400, dheight=400);
+    }
+    newImg.src = data.image;
+    
+
 }

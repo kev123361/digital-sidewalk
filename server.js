@@ -32,7 +32,7 @@ function newConnection(socket) {
     socket.on("requestCanvases", sendCanvases);
 
     function sendNewDrawings(data) {
-        console.log("Got Here");
+        //console.log("Got Here");
         //console.log(data.drawing);
         socket.broadcast.emit("newDrawingData", data);
     }
