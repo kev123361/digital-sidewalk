@@ -25,6 +25,7 @@ function setupCanvas_no(i){
 }
 function mouseInspector(i){
     coordi=[];
+    
     //inspect mouse over for all
     canvasName[i].on("mouse:over", function(event){
         //stitching
@@ -33,24 +34,6 @@ function mouseInspector(i){
             for(var j=0;j<canvasId.length;j++){
                 unableBrush(canvasName[j]);
             }
-            //inspect mouse down for stitching
-            canvasName[i].on("mouse:down", function(event) 
-            {
-                //make sure it's stitching again
-                if(activebrushName==brushName[3]){
-                    //if change canvas, clear coordi[], not letting the line connect to point location in another canvas
-                    var currentcanvasName=canvasName[i];
-                    if(currentcanvasName!=activecanvasName)coordi=[];
-                    //update all active parameter
-                    activecanvasName=canvasName[i];
-                    activecanvasId=canvasId[i];
-                    activecanvasName.isDrawingMode=false;
-                    activecanvasName.selection=false;
-                    activecanvasName.defaultCursor = 'url("needle.png"), auto';
-                    //set up stitching
-                    stitching(event);
-                }
-            });
         }
         //freedrawing brushes
         else{
@@ -69,6 +52,24 @@ function mouseInspector(i){
     
     });  
     
+    //inspect mouse down for stitching
+    canvasName[i].on("mouse:down", function(event) 
+    {
+        //make sure it's stitching again
+        if(activebrushName==brushName[3]){
+            //if change canvas, clear coordi[], not letting the line connect to point location in another canvas
+            var currentcanvasName=canvasName[i];
+            if(currentcanvasName!=activecanvasName)coordi=[];
+            //update all active parameter
+            activecanvasName=canvasName[i];
+            activecanvasId=canvasId[i];
+            activecanvasName.isDrawingMode=false;
+            activecanvasName.selection=false;
+            activecanvasName.defaultCursor = 'url("needle.png"), auto';
+            //set up stitching
+            stitching(event);
+        }
+    });
 
 }
 function stitching(event){
