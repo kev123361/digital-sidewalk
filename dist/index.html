@@ -33,8 +33,13 @@
     <!--options-->
     <div id="draggable">
         <div id="toolbox">
+            <!--back & forward-->
+            <div style="position:absolute;left:0px;top:100px">
+                <button><i class="fas fa-reply"></i></button>
+                <button> <i class="fas fa-share"></i></button>
+            </div>
             <!--brush-->
-            <div style="position:absolute; bottom:0px;width:500px;height:145px">
+            <div style="position:absolute; left:100px;bottom:0px;width:500px;">
                 <button id="crayon" onclick="changeBrush(0)" class="brush-choose" style="background-image: url('./assets/0.png');"></button>
                 <button id="ink" onclick="changeBrush(1)" class="brush-choose" style="background-image: url('./assets/1-1.png');"></button>
                 <button id="stitching" onclick="changeBrush(3)" class="brush-choose" style="background-image: url('./assets/2-1.png');"></button>
@@ -42,46 +47,28 @@
                 <p id="demo" style="top:1200px; left:0px;">aaa</p>-->
             </div>
             <!--color-->
-            <div style="position:absolute; bottom:50px;left:500px">
+            <div style="position:absolute; bottom:50px;left:600px">
                 Choose Color:<br>
 
                 <i class='fas fa-times color_choose'style="color:#333333;background-color:#ecb2b0"></i>
                 <input class="color" type="color" value="#333333" onclick="changeColor(event)" oninput="changeColor(event)"/>
 
-                <i class='fas fa-times color_choose'style="color:#828282"></i>
-                <input class="color" type="color" value="#828282" onclick="changeColor(event)"oninput="changeColor(event)"/>
-
-                <i class='fas fa-times color_choose'style="color:#f2f2f2"></i>
-                <input class="color" type="color" value="#f2f2f2" onclick="changeColor(event)"oninput="changeColor(event)"/>
-
                 <i class='fas fa-times color_choose'style="color:#eb5757"></i>
                 <input class="color" type="color" value="#eb5757" onclick="changeColor(event)"oninput="changeColor(event)"/>
-
-                <i class='fas fa-times color_choose'style="color:#f2994a"></i>
-                <input class="color" type="color" value="#f2994a" onclick="changeColor(event)"oninput="changeColor(event)"/>
 
                 <i class='fas fa-times color_choose'style="color:#f2c94c"></i>
                 <input class="color" type="color" value="#f2c94c" onclick="changeColor(event)"oninput="changeColor(event)"/>
 
                 <br>
 
-                <i class='fas fa-times color_choose'style="color:#2f80ed"></i>
-                <input class="color" type="color" value="#2f80ed" onclick="changeColor(event)"oninput="changeColor(event)"/>
-
                 <i class='fas fa-times color_choose'style="color:#56ccf2"></i>
                 <input class="color" type="color" value="#56ccf2" onclick="changeColor(event)"oninput="changeColor(event)"/>
-
-                <i class='fas fa-times color_choose'style="color:#9b51e0"></i>
-                <input class="color" type="color" value="#9b51e0" onclick="changeColor(event)"oninput="changeColor(event)"/>
 
                 <i class='fas fa-times color_choose'style="color:#bb6bd9"></i>
                 <input class="color" type="color" value="#bb6bd9" onclick="changeColor(event)"oninput="changeColor(event)"/>
 
                 <i class='fas fa-times color_choose'style="color:#219653"></i>
                 <input class="color" type="color" value="#219653" onclick="changeColor(event)"oninput="changeColor(event)"/>
-
-                <i class='fas fa-times color_choose'style="color:#6fcf97"></i>
-                <input class="color" type="color" value="#6fcf97" onclick="changeColor(event)"oninput="changeColor(event)"/>
             </div>
         </div>
         <!--size-->
