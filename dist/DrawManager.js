@@ -11,14 +11,22 @@ function setup() {
         mouseInspector(j);
     }
 
-    $("#color").change(function(event) {
-        console.log($(this).val());
-        $("#color_choose").css('color',$(this).val());
+    //color choose functions
+    $(".color").each(function(i,obj){
+        $(this).click(function(event) {
+            $(".color_choose").css({'background-color':"#ffffff"});
+            $(".color_choose:eq("+i+")").css({'background-color':"#ecb2b0"});
+        });
+        $(this).change(function(event) {
+            $(".color_choose:eq("+i+")").css({'color':$(this).val()});
+        });
     });
-    
-    $("#color_choose").click(function(event) {
-        $("#color").click();
+    $(".color_choose").each(function(i,obj){
+        $(this).click(function(event) {
+            $(".color:eq("+i+")").click();
+        });
     });
+   
 
 }
 function setupCanvas_no(i){

@@ -7,6 +7,13 @@
     background-position: center;
 }
 input[type=color]{
-    display: none;
-    
+   visibility: hidden;
+   width:10px;
+}
+.color_choose{
+    text-align: center;
+    width:30px;
+    border-radius: 50%;
+    line-height: 30px;
+    font-size:30px;
 }
