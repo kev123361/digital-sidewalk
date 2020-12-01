@@ -11,6 +11,24 @@ function setup() {
         mouseInspector(j);
     }
 
+    //color choose functions
+    $(".color").each(function(i,obj){
+        $(this).click(function(event) {
+            $(".color_choose").css({'background-color':"#ffffff"});
+            $(".color_choose:eq("+i+")").css({'background-color':"#ecb2b0"});
+            $(".color_choose:eq("+i+")").css({'color':$(this).val()});
+        });
+        $(this).change(function(event) {
+            $(".color_choose:eq("+i+")").css({'color':$(this).val()}); 
+        });
+    });
+    $(".color_choose").each(function(i,obj){
+        $(this).click(function(event) {
+            $(".color:eq("+i+")").click();
+        });
+    });
+   
+
 }
 function setupCanvas_no(i){
     canvasName[i] = new fabric.Canvas(canvasId[i], {
@@ -49,24 +67,7 @@ function mouseInspector(i){
             for(var j=0;j<canvasId.length;j++){
                 unableBrush(canvasName[j]);
             }
-            //inspect mouse down for stitching
-            canvasName[i].on("mouse:down", function(event) 
-            {
-                //make sure it's stitching again
-                if(activebrushName==brushName[3]){
-                    //if change canvas, clear coordi[], not letting the line connect to point location in another canvas
-                    var currentcanvasName=canvasName[i];
-                    if(currentcanvasName!=activecanvasName)coordi=[];
-                    //update all active parameter
-                    activecanvasName=canvasName[i];
-                    activecanvasId=canvasId[i];
-                    activecanvasName.isDrawingMode=false;
-                    activecanvasName.selection=false;
-                    activecanvasName.defaultCursor = 'url("needle.png"), auto';
-                    //set up stitching
-                    stitching(event);
-                }
-            });
+            
         }
         //freedrawing brushes
         else{
@@ -83,7 +84,24 @@ function mouseInspector(i){
             setupBrush(activecanvasName);
         }
     });  
-    
+    //inspect mouse down for stitching
+    canvasName[i].on("mouse:down", function(event) 
+    {
+        //make sure it's stitching again
+        if(activebrushName==brushName[3]){
+            //if change canvas, clear coordi[], not letting the line connect to point location in another canvas
+            var currentcanvasName=canvasName[i];
+            if(currentcanvasName!=activecanvasName)coordi=[];
+            //update all active parameter
+            activecanvasName=canvasName[i];
+            activecanvasId=canvasId[i];
+            activecanvasName.isDrawingMode=false;
+            activecanvasName.selection=false;
+            activecanvasName.defaultCursor = 'url("needle.png"), auto';
+            //set up stitching
+            stitching(event);
+        }
+    });
 
 }
 function stitching(event){
@@ -179,7 +197,21 @@ function changeWidth(e){
     activecanvasName.freeDrawingBrush.width=activeWidth;
     coordi=[];
 }
+
 function changeBrush(i){
+    //change button color
+    var brushes=document.getElementsByClassName("brush-choose");
+    for(let m=0;m<brushes.length;m++){
+        brushes[m].style.backgroundImage="url(./assets/"+m+"-1.png)";
+    }
+    if(i!=3){
+        brushes[i].style.backgroundImage="url(./assets/"+i+".png)";
+    }
+    else{
+        brushes[2].style.backgroundImage="url(./assets/2.png)";
+    }
+
+    //change brush
     activebrushName=brushName[i];
     coordi=[];
 }

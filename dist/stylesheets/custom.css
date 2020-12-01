@@ -1,0 +1,22 @@
+.brush-choose{
+    width:180px;
+    height:145px;
+    background-color: rgba(0, 0, 0, 0);
+    overflow: hidden;
+    border: none;
+    background-position: center;
+}
+input[type=color]{
+   visibility: hidden;
+   width:10px;
+}
+.color_choose{
+    text-align: center;
+    width:30px;
+    border-radius: 50%;
+    line-height: 30px;
+    font-size:30px;
+}
+.color_choose:hover{
+    text-shadow: 2px 2px 1px #a74f4d;
+}
