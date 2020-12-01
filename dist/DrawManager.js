@@ -179,7 +179,21 @@ function changeWidth(e){
     activecanvasName.freeDrawingBrush.width=activeWidth;
     coordi=[];
 }
+
 function changeBrush(i){
+    //change button color
+    var brushes=document.getElementsByClassName("brush-choose");
+    for(let m=0;m<brushes.length;m++){
+        brushes[m].style.backgroundImage="url(./assets/"+m+"-1.png)";
+    }
+    if(i!=3){
+        brushes[i].style.backgroundImage="url(./assets/"+i+".png)";
+    }
+    else{
+        brushes[2].style.backgroundImage="url(./assets/2.png)";
+    }
+
+    //change brush
     activebrushName=brushName[i];
     coordi=[];
 }

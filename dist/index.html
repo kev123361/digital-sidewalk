@@ -3,6 +3,8 @@
     <link rel="stylesheet" href="stylesheets/normalize.css">
     <link rel="stylesheet" href="stylesheets/github-light.css">
     <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/custom.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.js"></script>
     <script src="fabric.min.js"></script>
     <script src="fabric-brush.min.js"></script>
@@ -12,7 +14,7 @@
 
 
 <body>
-    
+    <!--canvas-->
     <div id="container">
         <div style="position:absolute; top:0px;">
             <canvas id="canvas1" width="400" height="400" style="border:2px solid #000000; "></canvas>
@@ -24,25 +26,29 @@
             <canvas id="canvas3" width="400" height="400" style="border:2px solid #000000;"></canvas>
         </div>    
     </div>
-    <div style="position:absolute; top:420px;">
+    <!--options-->
+    <!--size-->
+    <div style="position:absolute; top:420px;right:400px;">
         <p>Size: <span id="width_text"></span></p>
         <input type="range" id="width" min="0" max="100" value="50" onchange="changeWidth(event)"/>
     </div>
-    <div style="position:absolute; top:420px;left:400px;">
+    <!--opacity-->
+    <div style="position:absolute; top:420px;right:0px;">
         <p>Opacity: <span id="opacity_text"></span></p>
         <input type="range" id="opacity" min="0.1" max="1" value="0.7" onchange="changeOpacity(event)"/>
-        
     </div>
-    <div style="position:absolute; top:500px;">
+    <!--brush-->
+    <div style="position:absolute; bottom:0px;width:600px;">
+        <button id="crayon" onclick="changeBrush(0)" class="brush-choose" style="background-image: url('./assets/0.png');"></button>
+        <button id="ink" onclick="changeBrush(1)" class="brush-choose" style="background-image: url('./assets/1-1.png');"></button>
+        <button id="stitching" onclick="changeBrush(3)" class="brush-choose" style="background-image: url('./assets/2-1.png');"></button>
+        <!--
+        <p id="demo" style="top:1200px; left:0px;">aaa</p>-->
+    </div>
+    <!--color-->
+    <div style="position:absolute; bottom:0px;left:600px">
         Choose Yarn Color: <input type="color" value="#0000ff" onchange="changeColor(event)"/>
-        <button id="crayon" onclick="changeBrush(0)">Crayon</button>
-        <button id="ink" onclick="changeBrush(1)">Ink</button>
-        <button id="stitching" onclick="changeBrush(3)">Stitching</button>
-        
-        <p id="demo" style="top:1200px; left:0px;">aaa</p>
-        
     </div>
-   
 
     <script>
         var socket;

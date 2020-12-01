@@ -1,0 +1,8 @@
+.brush-choose{
+    width:180px;
+    height:145px;
+    background-color: rgba(0, 0, 0, 0);
+    overflow: hidden;
+    border: none;
+    background-position: center;
+}
