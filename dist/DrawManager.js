@@ -11,6 +11,15 @@ function setup() {
         mouseInspector(j);
     }
 
+    $("#color").change(function(event) {
+        console.log($(this).val());
+        $("#color_choose").css('color',$(this).val());
+    });
+    
+    $("#color_choose").click(function(event) {
+        $("#color").click();
+    });
+
 }
 function setupCanvas_no(i){
     canvasName[i] = new fabric.Canvas(canvasId[i], {

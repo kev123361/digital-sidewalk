@@ -1,5 +1,9 @@
 <html>
 <head>
+    <!--font awesome-->
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
     <link rel="stylesheet" href="stylesheets/normalize.css">
     <link rel="stylesheet" href="stylesheets/github-light.css">
     <link rel="stylesheet" href="stylesheets/styles.css">
@@ -47,7 +51,9 @@
     </div>
     <!--color-->
     <div style="position:absolute; bottom:0px;left:600px">
-        Choose Yarn Color: <input type="color" value="#0000ff" onchange="changeColor(event)"/>
+        Choose Yarn Color:<br>
+        <i id="color_choose" class='fas fa-times'style="font-size:32px;color:#0000ff"></i>
+        <input id="color" type="color" value="#0000ff" oninput="changeColor(event)"/>
     </div>
 
     <script>
