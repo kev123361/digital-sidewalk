@@ -1,11 +1,13 @@
+/*brush*/
 .brush-choose{
-    width:180px;
+    width:150px;
     height:145px;
     background-color: rgba(0, 0, 0, 0);
     overflow: hidden;
     border: none;
     background-position: center;
 }
+/*color*/
 input[type=color]{
    visibility: hidden;
    width:10px;
@@ -19,4 +21,24 @@ input[type=color]{
 }
 .color_choose:hover{
     text-shadow: 2px 2px 1px #a74f4d;
+}
+/*toolbox*/
+#draggable{
+    position: absolute;
+    z-index: 9;
+    width: 1000px;
+    height:200px;
+    border-radius:10px;
+    border:rgba(100,100,100,0.5) 1px solid;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+    background-color: rgba(255, 255, 255, 0.9);
+}
+#toolbox{
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
+    height:190px;
+}
+input{
+    z-index:15!important;
 }
