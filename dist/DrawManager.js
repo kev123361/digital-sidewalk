@@ -2,6 +2,7 @@ function setup() {
     //socket = io.connect(process.env.PORT || 'http://localhost:3000');
     socket = io();
     socket.on("newDrawingData", ReceiveNewDrawing);
+    socket.on("receiveCanvasImage", ReceiveCanvasImage);
     //at the beginning, set all the canvas to isDrawingMode:false selectable:false
     for(var i=0;i<canvasId.length;i++){
         setupCanvas_no(i);    
@@ -56,7 +57,23 @@ function setupCanvas_no(i){
         socket.emit("newDrawing", data);
 
     });
+
+    socket.emit("requestImageOfCanvas", i);
 }
+//setup specific canvas i from server
+//prevents desync
+function ReceiveCanvasImage(data) {
+    var newImg = new Image;
+    var ctx = canvasName[data.id].getContext('2d');
+
+    newImg.onload = function() {
+        ctx.clearRect(0, 0, canvasName[data.id].width, canvasName[data.id].height)
+        ctx.drawImage(newImg, 0, 0, dwidth=400, dheight=400);
+    }
+    newImg.src = data.image;
+    
+}
+
 function mouseInspector(i){
     coordi=[];
     //inspect mouse over for all

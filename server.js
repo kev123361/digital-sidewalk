@@ -18,6 +18,9 @@ var canvases = [
     [false,false ,false]
 ];
 
+//server dictionary holding current status of all canvases
+var canvasImages = {};
+
 //const port = process.env.PORT || 'http://localhost:3000'
 
 function newConnection(socket) {
@@ -30,10 +33,12 @@ function newConnection(socket) {
     socket.on("newMouseClick", sendNewMouseClick);
     socket.on("newUser", sendNewUserID);
     socket.on("requestCanvases", sendCanvases);
+    socket.on("requestImageOfCanvas", sendCanvasImage);
 
     function sendNewDrawings(data) {
         //console.log("Got Here");
         //console.log(data.drawing);
+        canvasImages[data.id] = data.image;
         socket.broadcast.emit("newDrawingData", data);
     }
 
@@ -52,6 +57,15 @@ function newConnection(socket) {
             canvases: canvases
         }
         socket.emit("receivedCanvases", data);
+    }
+
+    //send image of specific canvas
+    function sendCanvasImage(id) {
+        requestedCanvas = {
+            image: canvasImages[id],
+            id: id
+        }
+        socket.emit("receiveCanvasImage", requestedCanvas);
     }
 }
 
