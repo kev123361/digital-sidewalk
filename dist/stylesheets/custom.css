@@ -17,3 +17,6 @@ input[type=color]{
     line-height: 30px;
     font-size:30px;
 }
+.color_choose:hover{
+    text-shadow: 2px 2px 1px #a74f4d;
+}
