@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="stylesheets/normalize.css">
     <link rel="stylesheet" href="stylesheets/github-light.css">
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/custom.css">
+    <link rel="stylesheet" href="./custom.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.js"></script>
     <script src="fabric.min.js"></script>
@@ -34,12 +34,12 @@
     <div id="draggable">
         <div id="toolbox">
             <!--back & forward-->
-            <div style="position:absolute;left:0px;top:100px">
-                <button><i class="fas fa-reply"></i></button>
-                <button> <i class="fas fa-share"></i></button>
+            <div style="position:absolute;left:30px;top:70px">
+                <button class="tool-button" disabled><i class="fas fa-reply"></i></button>
+                <button class="tool-button" disabled> <i class="fas fa-share"></i></button>
             </div>
             <!--brush-->
-            <div style="position:absolute; left:100px;bottom:0px;width:500px;">
+            <div style="position:absolute; left:200px;bottom:0px;">
                 <button id="crayon" onclick="changeBrush(0)" class="brush-choose" style="background-image: url('./assets/0.png');"></button>
                 <button id="ink" onclick="changeBrush(1)" class="brush-choose" style="background-image: url('./assets/1-1.png');"></button>
                 <button id="stitching" onclick="changeBrush(3)" class="brush-choose" style="background-image: url('./assets/2-1.png');"></button>
@@ -47,8 +47,8 @@
                 <p id="demo" style="top:1200px; left:0px;">aaa</p>-->
             </div>
             <!--color-->
-            <div style="position:absolute; bottom:50px;left:600px">
-                Choose Color:<br>
+            <div style="position:absolute;top:24px;left:550px">
+                Choose Color:<br><br>
 
                 <i class='fas fa-times color_choose'style="color:#333333;background-color:#ecb2b0"></i>
                 <input class="color" type="color" value="#333333" onclick="changeColor(event)" oninput="changeColor(event)"/>
@@ -72,14 +72,14 @@
             </div>
         </div>
         <!--size-->
-        <div style="position:absolute; bottom:100px;left:800px;">
+        <div style="position:absolute; top:24px;left:720px;">
             <p>Size: <span id="width_text"></span></p>
-            <input type="range" id="width" min="0" max="100" value="50" onchange="changeWidth(event)"/>
+            <input type="range" id="width" min="0" max="100" value="50" oninput="changeWidth(event)"/>
         </div>
         <!--opacity-->
-        <div style="position:absolute; bottom:40px;left:800px;">
+        <div style="position:absolute; bottom:30px;left:720px;">
             <p>Opacity: <span id="opacity_text"></span></p>
-            <input type="range" id="opacity" min="0.1" max="1" value="0.7" onchange="changeOpacity(event)"/>
+            <input type="range" id="opacity" min="0.1" max="1" value="0.7" oninput="changeOpacity(event)"/>
         </div>
     </div>
     <script>
