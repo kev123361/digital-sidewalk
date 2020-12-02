@@ -118,6 +118,10 @@ function mouseInspector(i){
             //set up stitching
             stitching(event);
         }
+        //fixing opacity update problem
+        if(activebrushName==brushName[1]){
+            activecanvasName.freeDrawingBrush.changeOpacity(activeOpacity);
+        }
     });
 
 }
@@ -233,7 +237,7 @@ function changeBrush(i){
     coordi=[];
 }
 function changeOpacity(e){
-    activeOpacity=e.target.value;
+    activeOpacity=parseFloat(e.target.value/100);
     activecanvasName.freeDrawingBrush.changeOpacity(activeOpacity);
     coordi=[];
 }
