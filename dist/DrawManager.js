@@ -1,8 +1,12 @@
+var socket;
+
 function setup() {
     //socket = io.connect(process.env.PORT || 'http://localhost:3000');
     socket = io();
     socket.on("newDrawingData", ReceiveNewDrawing);
     socket.on("receiveCanvasImage", ReceiveCanvasImage);
+    socket.on("receiveNewPath", ReceiveNewStitch);
+    socket.on("receiveNewCircle", ReceiveNewCircle);
     //at the beginning, set all the canvas to isDrawingMode:false selectable:false
     for(var i=0;i<canvasId.length;i++){
         setupCanvas_no(i);    
@@ -57,6 +61,7 @@ function setupCanvas_no(i){
         socket.emit("newDrawing", data);
 
     });
+    
 
     socket.emit("requestImageOfCanvas", i);
 }
@@ -146,6 +151,24 @@ function stitching(event){
         shadow:shadow
     });
     activecanvasName.add(circlePoint);
+    circleData = {
+        id: parseInt(activecanvasId.slice(-1)) - 1,
+        shadowparam: {
+            blur:3,
+            color:"black"
+        },
+        circleparam: {
+            radius: 2,
+            fill: "#081d1f",
+            left: positionX,
+            top: positionY,
+            selectable: false,
+            originX: "center",
+            originY: "center",
+            hoverCursor: "auto"
+        }
+    }
+    socket.emit("newCircle", circleData);
     // Store the points to draw the lines
     coordi.push(circlePoint);
     if (coordi.length > 1) 
@@ -178,8 +201,51 @@ function stitching(event){
         coordi[0]=coordi[1];
         coordi.pop();
         activecanvasName.add(line);
+
+        console.log(parseInt(activecanvasId.slice(-1)) - 1);
+        data = {
+            id: parseInt(activecanvasId.slice(-1)) - 1,
+            line: line,
+            startend: [
+                startPoint.get("left"),
+                startPoint.get("top"),
+                endPoint.get("left"),
+                endPoint.get("top")
+            ],
+            params : {
+                stroke: activeColor,
+                strokeWidth: 3,
+                hasControls: false,
+                hasBorders: false,
+                selectable: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                hoverCursor: "default",
+                originX: "center",
+                originY: "center"
+            }
+            
+        }
+
+        socket.emit("newPath", data);
     }
 }
+//receive new stitch from server
+function ReceiveNewStitch(data) {
+    //console.log(data);
+    var newLine = new fabric.Line(data.startend, data.params);
+    canvasName[data.id].add(newLine);
+    //console.log(canvasName[1]);
+}
+function ReceiveNewCircle(data) {
+    var newCircleParameters = data.circleparam;
+    newCircleParameters.shadow = new fabric.Shadow(data.shadowparam);
+
+    var newCircle = new fabric.Circle(newCircleParameters);
+    console.log(newCircle);
+    canvasName[data.id].add(newCircle);
+}
+
 function setupBrush(canvas_name) {
     canvas_name.forEachObject(function(object){ 
         object.selectable = false; 
@@ -247,7 +313,7 @@ function ReceiveNewDrawing(data) {
     var ctx = canvasName[data.id].getContext('2d');
 
     newImg.onload = function() {
-        ctx.clearRect(0, 0, canvasName[data.id].width, canvasName[data.id].height)
+        //ctx.clearRect(0, 0, canvasName[data.id].width, canvasName[data.id].height)
         ctx.drawImage(newImg, 0, 0, dwidth=400, dheight=400);
     }
     newImg.src = data.image;
