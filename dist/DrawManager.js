@@ -7,6 +7,7 @@ function setup() {
     socket.on("receiveCanvasImage", ReceiveCanvasImage);
     socket.on("receiveNewPath", ReceiveNewStitch);
     socket.on("receiveNewCircle", ReceiveNewCircle);
+    socket.on("receiveReset", WipeAllCanvases);
     //at the beginning, set all the canvas to isDrawingMode:false selectable:false
     for(var i=0;i<canvasId.length;i++){
         setupCanvas_no(i);    
@@ -49,7 +50,7 @@ function setupCanvas_no(i){
     });
     canvasName[i].on("mouse:up", function(event) {
         
-        //canvasName[i].contextTopDirty = true;
+        canvasName[i].contextTopDirty = true;
         //canvasName[i].add(imgcopy);
 
 
@@ -361,3 +362,16 @@ function dragElement(elmnt) {
       document.onmousemove = null;
     }
   }
+
+  function reset() {
+      console.log("resetting everything");
+      socket.emit("reset");
+      WipeAllCanvases();
+
+  }
+
+function WipeAllCanvases() {
+    for (let j=0; j < canvasName.length; j++) {
+        canvasName[j].clear();
+    }
+}

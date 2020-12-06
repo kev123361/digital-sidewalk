@@ -36,6 +36,7 @@ function newConnection(socket) {
     socket.on("requestImageOfCanvas", sendCanvasImage);
     socket.on("newPath", sendNewPath);
     socket.on("newCircle", sendNewCircle);
+    socket.on("reset", Reset);
 
     function sendNewDrawings(data) {
         //console.log("Got Here");
@@ -76,6 +77,11 @@ function newConnection(socket) {
 
     function sendNewCircle(data) {
         socket.broadcast.emit("receiveNewCircle", data);
+    }
+
+    function Reset() {
+        canvasImages = {};
+        socket.broadcast.emit("receiveReset");
     }
 }
 
